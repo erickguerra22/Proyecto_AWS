@@ -13,22 +13,22 @@ con.connect((err)=>{
 app.use(bp.json())
 app.use(bp.urlencoded({extended:true}))
 
-app.get('/', (req, res) => {
+app.get('/server', (req, res) => {
     res.json({ message: 'Hello World!' })
 })
 
-app.get('/health-check', (req, res) => {
+app.get('/server/health-check', (req, res) => {
     res.json({ message: 'Servidor levantado y corriendo' })
 })
 
-app.get('/instrument', (req, res) => {
+app.get('/server/instrument', (req, res) => {
     con.query('select * from Instrumentos;',(err,result)=>{
         if(err) throw err
         res.json({resultado: result})
     })
 })
 
-app.post('/instrument',(req,res)=>{
+app.post('/server/instrument',(req,res)=>{
     const data = req.body
     const query = 'insert into Instrumentos VALUES (?,?,?);'
     con.query(query,[data.nombre,data.tipo,data.precio],(err,result)=>{
