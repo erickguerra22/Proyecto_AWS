@@ -1,17 +1,20 @@
 const express = require('express')
 const bp = require('body-parser')
 const app = express();
+var cors = require('cors')
 const PORT = 2800;
 
 const con = require('./DBConnection')
 
-con.connect((err)=>{
+con.connect((err) => {
     if (err) throw err
     console.log("Connected!")
 });
 
+app.use(cors())
+
 app.use(bp.json())
-app.use(bp.urlencoded({extended:true}))
+app.use(bp.urlencoded({ extended: true }))
 
 app.get('/server', (req, res) => {
     res.json({ message: 'Hello World!' })
@@ -22,18 +25,18 @@ app.get('/server/health-check', (req, res) => {
 })
 
 app.get('/server/instrument', (req, res) => {
-    con.query('select * from Instrumentos;',(err,result)=>{
-        if(err) throw err
-        res.json({resultado: result})
+    con.query('select * from Instrumentos;', (err, result) => {
+        if (err) throw err
+        res.json(result)
     })
 })
 
-app.post('/server/instrument',(req,res)=>{
+app.post('/server/instrument', (req, res) => {
     const data = req.body
     const query = 'insert into Instrumentos VALUES (?,?,?);'
-    con.query(query,[data.nombre,data.tipo,data.precio],(err,result)=>{
-        if(err) throw console.log(err)
-        res.json({"Filas insertadas": result.affectedRows})
+    con.query(query, [data.nombre, data.tipo, data.precio], (err, result) => {
+        if (err) throw console.log(err)
+        res.json({ "Filas insertadas": result.affectedRows })
     })
 })
 
